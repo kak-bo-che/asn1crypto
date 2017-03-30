@@ -31,6 +31,7 @@ from .algos import (
     HmacAlgorithm,
     KdfAlgorithm,
     SignedDigestAlgorithm,
+    DigestInfo,
 )
 from .core import (
     Any,
@@ -48,6 +49,8 @@ from .core import (
     SetOf,
     UTCTime,
     UTF8String,
+    IA5String,
+    BMPString,
 )
 from .crl import CertificateList
 from .keys import PublicKeyInfo
@@ -120,6 +123,7 @@ class ContentType(ObjectIdentifier):
         '1.2.840.113549.1.9.16.1.2': 'authenticated_data',
         '1.2.840.113549.1.9.16.1.9': 'compressed_data',
         '1.2.840.113549.1.9.16.1.23': 'authenticated_enveloped_data',
+        '1.3.6.1.4.1.311.2.1.4': 'spc_indirect_data_content'
     }
 
 
@@ -225,7 +229,6 @@ class ObjectDigestInfo(Sequence):
         ('digest_algorithm', DigestAlgorithm),
         ('object_digest', OctetBitString),
     ]
-
 
 class Holder(Sequence):
     _fields = [
@@ -849,6 +852,58 @@ class AuthEnvelopedData(Sequence):
         ('unauth_attrs', CMSAttributes, {'tag_type': 'implicit', 'tag': 2, 'optional': True}),
     ]
 
+class SpcPeImageDataId(ObjectIdentifier):
+    _map = {
+        '1.3.6.1.4.1.311.2.1.15': 'spc_pe_image_data',
+    }
+
+class SpcPeImageFlags(BitString):
+    _map = {
+        0: 'include_resources',
+        1: 'include_debug_info',
+        2: 'include_import_address_table',
+    }
+
+class SpcSerializedObject(Sequence):
+    _fields = [
+        ('class_id', OctetString),
+        ('serialized_data', OctetString)
+    ]
+
+class SpcString(Choice):
+    _alternatives = [
+        ('unicode', BMPString),
+        ('ascii', IA5String),
+    ]
+
+class SpcLink(Choice):
+    _alternatives = [
+        ('url', IA5String),
+        ('moniker', SpcSerializedObject),
+        ('file', SpcString),
+    ]
+
+class SpcPeImageData(Sequence):
+    _fields = [
+        ('flags', SpcPeImageFlags),
+        ('file', SpcLink),
+    ]
+
+class SpcAttributeTypeAndOptionalValue(Sequence):
+    # NameTypeAndValue
+    _fields = [
+        ('type', SpcPeImageDataId), # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
+        ('value', SpcPeImageData), # SpcPeImageData
+    ]
+
+    _oid_pair = ('type', 'value')
+
+class SpcIndirectDataContent(Sequence):
+    _fields = [
+        ('data', SpcAttributeTypeAndOptionalValue),
+        ('message_digest', DigestInfo),
+    ]
+
 
 class CompressionAlgorithmId(ObjectIdentifier):
     _map = {
@@ -891,6 +946,7 @@ ContentInfo._oid_specs = {
     'authenticated_data': AuthenticatedData,
     'compressed_data': CompressedData,
     'authenticated_enveloped_data': AuthEnvelopedData,
+    'spc_indirect_data_content': SpcIndirectDataContent,
 }
 
 
