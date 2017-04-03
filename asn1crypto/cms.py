@@ -892,11 +892,14 @@ class SpcPeImageData(Sequence):
 class SpcAttributeTypeAndOptionalValue(Sequence):
     # NameTypeAndValue
     _fields = [
-        ('type', SpcPeImageDataId), # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
-        ('value', SpcPeImageData), # SpcPeImageData
+        ('type', ObjectIdentifier), # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
+        ('value', Any), # SpcPeImageData
     ]
 
     _oid_pair = ('type', 'value')
+    _oid_specs = {
+        'spc_pe_image_data': SpcPeImageData,
+    }
 
 class SpcIndirectDataContent(Sequence):
     _fields = [
