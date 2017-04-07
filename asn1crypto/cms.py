@@ -102,6 +102,8 @@ class CMSAttributeType(ObjectIdentifier):
         '1.2.840.113549.1.9.6': 'counter_signature',
         # https://tools.ietf.org/html/rfc3161#page-20
         '1.2.840.113549.1.9.16.2.14': 'signature_time_stamp_token',
+        '1.3.6.1.4.1.311.2.1.12': 'spc_sp_opus_info',
+        '1.3.6.1.4.1.311.2.1.11': 'spc_statement_type'
     }
 
 
@@ -872,15 +874,15 @@ class SpcSerializedObject(Sequence):
 
 class SpcString(Choice):
     _alternatives = [
-        ('unicode', BMPString),
-        ('ascii', IA5String),
+        ('unicode', BMPString, {'tag_type': 'implicit', 'tag': 0}),
+        ('ascii', IA5String, {'tag_type': 'implicit', 'tag': 1}),
     ]
 
 class SpcLink(Choice):
     _alternatives = [
-        ('url', IA5String),
-        ('moniker', SpcSerializedObject),
-        ('file', SpcString),
+        ('url', IA5String, {'tag_type': 'implicit', 'tag': 0}),
+        ('moniker', SpcSerializedObject, {'tag_type': 'implicit', 'tag': 1}),
+        ('file', SpcString, {'tag_type': 'explicit', 'tag': 2}),
     ]
 
 class SpcPeImageData(Sequence):
@@ -892,8 +894,8 @@ class SpcPeImageData(Sequence):
 class SpcAttributeTypeAndOptionalValue(Sequence):
     # NameTypeAndValue
     _fields = [
-        ('type', ObjectIdentifier), # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
-        ('value', Any), # SpcPeImageData
+        ('type', SpcPeImageDataId), # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
+        ('value', SpcPeImageData, {'tag_type': 'explicit', 'tag': 0, 'optional': True}), # SpcPeImageData
     ]
 
     _oid_pair = ('type', 'value')
@@ -907,6 +909,20 @@ class SpcIndirectDataContent(Sequence):
         ('message_digest', DigestInfo),
     ]
 
+class SpcStatementType(SequenceOf):
+     _child_spec = ObjectIdentifier
+
+class SetOfSpcStatementType(SetOf):
+    _child_spec = SpcStatementType
+
+class SpcSpOpusInfo(Sequence):
+    _fields = [
+        ('program_name', SpcString, {'tag_type': 'explicit', 'tag': 0, 'optional': True}),
+        ('more_info', SpcLink,      {'tag_type': 'explicit', 'tag': 1, 'optional': True})
+    ]
+
+class SetOfSpcSpOpusInfo(SetOf):
+    _child_spec = SpcSpOpusInfo
 
 class CompressionAlgorithmId(ObjectIdentifier):
     _map = {
@@ -971,4 +987,6 @@ CMSAttribute._oid_specs = {
     'signing_time': SetOfTime,
     'counter_signature': SignerInfos,
     'signature_time_stamp_token': SetOfContentInfo,
+    'spc_sp_opus_info': SetOfSpcSpOpusInfo,
+    'spc_statement_type': SetOfSpcStatementType
 }
