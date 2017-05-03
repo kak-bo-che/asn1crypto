@@ -2379,6 +2379,28 @@ class Certificate(Sequence):
         return output
 
     @property
+    def ca_issuer_urls(self):
+        """
+        :return:
+            A list of zero or more unicode strings of the ca issuer urls for
+            this cert
+        """
+
+        if not self.authority_information_access_value:
+            return []
+
+        output = []
+        for entry in self.authority_information_access_value:
+            if entry['access_method'].native == 'ca_issuers':
+                location = entry['access_location']
+                if location.name != 'uniform_resource_identifier':
+                    continue
+                url = location.native
+                if url.lower()[0:7] == 'http://':
+                    output.append(url)
+        return output
+
+    @property
     def valid_domains(self):
         """
         :return:

@@ -2865,12 +2865,14 @@ class ObjectIdentifier(Primitive, ValueMap):
         return self._native
 
 
-class ObjectDescriptor(Primitive):
+class ObjectDescriptor(AbstractString):
     """
     Represents an object descriptor from ASN.1 - no Python implementation
     """
 
     tag = 7
+    # Might be completely wrong here... this is what MS uses
+    _encoding = 'utf-16-le'
 
 
 class InstanceOf(Primitive):
