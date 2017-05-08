@@ -22,9 +22,14 @@ from .core import (
 from .cms import (
     CMSAttributeType,
     ContentType,
-    ContentInfo,
+    SetOfContentInfo,
     Time,
     CMSAttribute
+)
+from .tsp import (
+    ContentInfo,
+    EncapsulatedContentInfo,
+    TSTInfo
 )
 
 
@@ -183,9 +188,13 @@ class CertificateTrustList(Sequence):
         ('cat_name_value', CatNameValue, {'tag_type': 'explicit', 'tag': 0, 'optional': True})
     ]
 
+
 # add mapping into existing cms.
 CMSAttributeType._map['1.3.6.1.4.1.311.2.1.11'] = 'spc_statement_type'
 CMSAttributeType._map['1.3.6.1.4.1.311.2.1.12'] = 'spc_sp_opus_info'
+# New Timestamp  Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP) Used in OSS
+CMSAttributeType._map['1.3.6.1.4.1.311.2.4.1'] = 'spc_nested_signature'
+CMSAttributeType._map['1.3.6.1.4.1.311.3.3.1'] = 'spc_rfc3161'
 
 ContentType._map['1.3.6.1.4.1.311.2.1.4'] = 'spc_indirect_data_content'
 ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list' # szOID_CTL
@@ -193,6 +202,10 @@ ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list' # szOID_CTL
 ContentInfo._oid_specs['spc_indirect_data_content'] = SpcIndirectDataContent
 ContentInfo._oid_specs['certificate_trust_list'] = CertificateTrustList
 
+
 CMSAttribute._oid_specs['spc_sp_opus_info'] = SetOfSpcSpOpusInfo
 CMSAttribute._oid_specs['spc_statement_type'] = SetOfSpcStatementType
+CMSAttribute._oid_specs['spc_rfc3161'] = SetOfContentInfo
+CMSAttribute._oid_specs['spc_nested_signature'] = SetOfContentInfo
 
+EncapsulatedContentInfo._oid_specs['tst_info'] = TSTInfo

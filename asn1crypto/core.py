@@ -4639,7 +4639,13 @@ class GeneralizedTime(AbstractTime):
             date_format = '%Y%m%d%H%M'
         elif strlen == 14:
             date_format = '%Y%m%d%H%M%S'
-        elif strlen == 18:
+        elif strlen > 15 and strlen < 22:
+            # see note in python docs:
+            # When used with the strptime() method, the %f directive accepts
+            # from one to six digits and zero pads on the right. %f is an
+            # extension to the set of format characters in the C standard
+            # (but implemented separately in datetime objects, and therefore
+            # always available).
             date_format = '%Y%m%d%H%M%S.%f'
 
         if date_format:
