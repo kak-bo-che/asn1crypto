@@ -24,7 +24,8 @@ from .cms import (
     ContentType,
     SetOfContentInfo,
     Time,
-    CMSAttribute
+    CMSAttribute,
+    SignerInfos
 )
 from .tsp import (
     ContentInfo,
@@ -82,11 +83,6 @@ class SpcAttributeTypeAndOptionalValue(Sequence):
         ('type', SpcPeImageDataId),  # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
         ('value', SpcPeImageData, {'tag_type': 'explicit', 'tag': 0, 'optional': True}),  # SpcPeImageData
     ]
-
-    _oid_pair = ('type', 'value')
-    _oid_specs = {
-        'spc_pe_image_data': SpcPeImageData,
-    }
 
 
 class SpcIndirectDataContent(Sequence):
@@ -188,6 +184,8 @@ class CertificateTrustList(Sequence):
         ('cat_name_value', CatNameValue, {'tag_type': 'explicit', 'tag': 0, 'optional': True})
     ]
 
+# strange but true
+SignerInfos._bad_tag = 18
 
 # add mapping into existing cms.
 CMSAttributeType._map['1.3.6.1.4.1.311.2.1.11'] = 'spc_statement_type'
@@ -197,9 +195,11 @@ CMSAttributeType._map['1.3.6.1.4.1.311.2.4.1'] = 'spc_nested_signature'
 CMSAttributeType._map['1.3.6.1.4.1.311.3.3.1'] = 'spc_rfc3161'
 
 ContentType._map['1.3.6.1.4.1.311.2.1.4'] = 'spc_indirect_data_content'
+# ContentType._map['1.3.7.19.4.8.15.8.2.4'] = '1.3.7.19.4.8.15.8.2.4'
 ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list' # szOID_CTL
 
 ContentInfo._oid_specs['spc_indirect_data_content'] = SpcIndirectDataContent
+# ContentInfo._oid_specs['1.3.7.19.4.8.15.8.2.4'] = SpcIndirectDataContent
 ContentInfo._oid_specs['certificate_trust_list'] = CertificateTrustList
 
 
