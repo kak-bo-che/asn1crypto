@@ -1685,6 +1685,11 @@ class KeyPurposeId(ObjectIdentifier):
         '1.2.840.113625.100.1.32': 'apple_test_smp_encryption',
         '1.2.840.113635.100.1.33': 'apple_server_authentication',
         '1.2.840.113635.100.1.34': 'apple_pcs_escrow_service',
+
+        # gated crypto https://en.wikipedia.org/wiki/Server-Gated_Cryptography
+        '2.16.840.1.113730.4.1': 'netscape_server_gated_crypto',
+        '2.16.840.1.113733.1.8.1': 'verisign_server_gated_crypto',
+
     }
 
 
