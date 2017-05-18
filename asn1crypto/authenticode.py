@@ -73,17 +73,18 @@ class SpcLink(Choice):
 class SpcPeImageData(Sequence):
     _fields = [
         ('flags', SpcPeImageFlags),
-        ('file', SpcLink),
+        # under specified in Authenticode Documentation
+        ('file', SpcLink, {'tag_type': 'explicit', 'tag': 0}),
     ]
 
 
 class SpcAttributeTypeAndOptionalValue(Sequence):
-    # NameTypeAndValue
     _fields = [
         ('type', SpcPeImageDataId),  # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
-        ('value', SpcPeImageData, {'tag_type': 'explicit', 'tag': 0, 'optional': True}),  # SpcPeImageData
-    ]
+        # incorrectly specified in Authenticode Documentation
+        ('value', SpcPeImageData, {'optional': True})
 
+    ]
 
 class SpcIndirectDataContent(Sequence):
     _fields = [
@@ -128,12 +129,7 @@ class MemberKeyPurposeIdentifiers(SetOf):
     _child_spec = ParsableOctetString
 
 class MemberKeyFriendlyName(SetOf):
-    # _child_spec = OctetString#ObjectDescriptor
     _child_spec = ParsableOctetString
-    # _fields = [
-    #     ('value', ParsableOctetString, {'optional': True})
-    #     ('name', ObjectDescriptor, {'optional': True})
-    # ]
 
 class MemberInfoId(ObjectIdentifier):
     _map = {
