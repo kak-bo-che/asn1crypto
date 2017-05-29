@@ -186,6 +186,8 @@ SignerInfos._bad_tag = 18
 # add mapping into existing cms.
 CMSAttributeType._map['1.3.6.1.4.1.311.2.1.11'] = 'spc_statement_type'
 CMSAttributeType._map['1.3.6.1.4.1.311.2.1.12'] = 'spc_sp_opus_info'
+CMSAttributeType._map['1.2.840.113549.1.9.25.4'] = 'sequence_number'
+
 # New Timestamp  Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP) Used in OSS
 CMSAttributeType._map['1.3.6.1.4.1.311.2.4.1'] = 'spc_nested_signature'
 CMSAttributeType._map['1.3.6.1.4.1.311.3.3.1'] = 'spc_rfc3161'

@@ -247,6 +247,7 @@ class SignedDigestAlgorithmId(ObjectIdentifier):
         '1.2.840.113549.1.1.1': 'rsassa_pkcs1v15',
         '1.2.840.10040.4.1': 'dsa',
         '1.2.840.10045.4': 'ecdsa',
+        '1.2.840.10045.2.1': 'ecdsa', # also possible?
     }
 
     _reverse_map = {
