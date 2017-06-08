@@ -219,7 +219,6 @@ class RSASSAPSSParams(Sequence):
         ),
     ]
 
-
 class SignedDigestAlgorithmId(ObjectIdentifier):
     _map = {
         '1.3.14.3.2.3': 'md5_rsa',
