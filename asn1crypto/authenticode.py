@@ -1,4 +1,10 @@
 from __future__ import unicode_literals, division, absolute_import, print_function
+"""
+ASN.1 type classes for Microsoft Authenticode signature structures. Adds extra
+oid mapping and value parsing to asn1crypto.cms.ContentType()
+asn1crypto.tsp.ContentInfo() and asn1crypto.cms.CMSAttribute().
+"""
+
 from .algos import (
     DigestInfo
 )
@@ -72,6 +78,11 @@ class SpcLink(Choice):
 
 class SpcPeImageData(Sequence):
     _fields = [
+    ]
+
+
+class SpcPeImageData(Sequence):
+    _fields = [
         ('flags', SpcPeImageFlags),
         # under specified in Authenticode Documentation
         ('file', SpcLink, {'tag_type': 'explicit', 'tag': 0}),
@@ -110,6 +121,10 @@ class SpcSpOpusInfo(Sequence):
 
 class SetOfSpcSpOpusInfo(SetOf):
     _child_spec = SpcSpOpusInfo
+
+
+class SetOfGoToMeetingData(SetOf):
+    _child_spec = Any
 
 
 # catalog def found here: https://github.com/kirei/catt/blob/master/scripts/parse-microsoft-authroot.pl
@@ -200,6 +215,8 @@ CMSAttributeType._map['1.2.840.113549.1.9.15'] = 'rsa_smime_capabilities'
 # New Timestamp  Internet X.509 Public Key Infrastructure Time-Stamp Protocol (TSP) Used in OSS
 CMSAttributeType._map['1.3.6.1.4.1.311.2.4.1'] = 'spc_nested_signature'
 CMSAttributeType._map['1.3.6.1.4.1.311.3.3.1'] = 'spc_rfc3161'
+CMSAttributeType._map['1.3.6.1.4.1.311.10.3.28'] = 'platform_manifest_binary_id'
+CMSAttributeType._map['1.3.6.1.4.1.3845.3.9876.1.1.1'] = 'gotomeeting_data'
 
 ContentType._map['1.3.6.1.4.1.311.2.1.4'] = 'spc_indirect_data_content'
 # ContentType._map['1.3.7.19.4.8.15.8.2.4'] = '1.3.7.19.4.8.15.8.2.4'
@@ -214,5 +231,6 @@ CMSAttribute._oid_specs['spc_sp_opus_info'] = SetOfSpcSpOpusInfo
 CMSAttribute._oid_specs['spc_statement_type'] = SetOfSpcStatementType
 CMSAttribute._oid_specs['spc_rfc3161'] = SetOfContentInfo
 CMSAttribute._oid_specs['spc_nested_signature'] = SetOfContentInfo
+CMSAttribute._oid_specs['gotomeeting_data'] = SetOfGoToMeetingData
 
 EncapsulatedContentInfo._oid_specs['tst_info'] = TSTInfo
