@@ -17,8 +17,6 @@ from .core import (
     IA5String,
     BMPString,
     Null,
-    Set,
-    ObjectDescriptor,
     SequenceOf,
     SetOf,
     ParsableOctetString,
@@ -78,11 +76,6 @@ class SpcLink(Choice):
 
 class SpcPeImageData(Sequence):
     _fields = [
-    ]
-
-
-class SpcPeImageData(Sequence):
-    _fields = [
         ('flags', SpcPeImageFlags),
         # under specified in Authenticode Documentation
         ('file', SpcLink, {'tag_type': 'explicit', 'tag': 0}),
@@ -96,6 +89,7 @@ class SpcAttributeTypeAndOptionalValue(Sequence):
         ('value', SpcPeImageData, {'optional': True})
 
     ]
+
 
 class SpcIndirectDataContent(Sequence):
     _fields = [
@@ -133,18 +127,25 @@ class CatalogIDSequence(Sequence):
         ('oid', ObjectIdentifier)
     ]
 
+
 class OIDSequence(Sequence):
     _fields = [
         ('oid', ObjectIdentifier),
         ('null', Null)
     ]
+
+
 class MemberKeyGeneric(SetOf):
     _child_spec = OctetString
+
+
 class MemberKeyPurposeIdentifiers(SetOf):
     _child_spec = ParsableOctetString
 
+
 class MemberKeyFriendlyName(SetOf):
     _child_spec = ParsableOctetString
+
 
 class MemberInfoId(ObjectIdentifier):
     _map = {
@@ -156,6 +157,7 @@ class MemberInfoId(ObjectIdentifier):
         '1.3.6.1.4.1.311.10.11.98': 'oid_cert_prop_id_prefix_98',
         '1.3.6.1.4.1.311.10.11.105': 'oid_cert_prop_id_prefix_105',
     }
+
 
 class MemberInfo(Sequence):
     _fields = [
@@ -170,8 +172,10 @@ class MemberInfo(Sequence):
         # 'cert_friendly_name_prop_id': MemberKeyFriendlyName
     }
 
+
 class CatalogMemberSet(SetOf):
     _child_spec = MemberInfo
+
 
 class CatalogMember(Sequence):
     _fields = [
@@ -179,11 +183,14 @@ class CatalogMember(Sequence):
         ('catalog_member_set', CatalogMemberSet)
     ]
 
+
 class CatalogList(SequenceOf):
     _child_spec = CatalogMember
 
+
 class CatNameValue(Sequence):
     pass
+
 
 class CertificateTrustList(Sequence):
     _fields = [
@@ -194,6 +201,7 @@ class CertificateTrustList(Sequence):
         ('catalog_list', CatalogList),
         ('cat_name_value', CatNameValue, {'tag_type': 'explicit', 'tag': 0, 'optional': True})
     ]
+
 
 # strange but true
 SignerInfos._bad_tag = 18
@@ -220,7 +228,7 @@ CMSAttributeType._map['1.3.6.1.4.1.3845.3.9876.1.1.1'] = 'gotomeeting_data'
 
 ContentType._map['1.3.6.1.4.1.311.2.1.4'] = 'spc_indirect_data_content'
 # ContentType._map['1.3.7.19.4.8.15.8.2.4'] = '1.3.7.19.4.8.15.8.2.4'
-ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list' # szOID_CTL
+ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list'  # szOID_CTL
 
 ContentInfo._oid_specs['spc_indirect_data_content'] = SpcIndirectDataContent
 # ContentInfo._oid_specs['1.3.7.19.4.8.15.8.2.4'] = SpcIndirectDataContent
@@ -230,7 +238,7 @@ ContentInfo._oid_specs['certificate_trust_list'] = CertificateTrustList
 CMSAttribute._oid_specs['spc_sp_opus_info'] = SetOfSpcSpOpusInfo
 CMSAttribute._oid_specs['spc_statement_type'] = SetOfSpcStatementType
 CMSAttribute._oid_specs['spc_rfc3161'] = SetOfContentInfo
-CMSAttribute._oid_specs['spc_nested_signature'] = SetOfContentInfo
 CMSAttribute._oid_specs['gotomeeting_data'] = SetOfGoToMeetingData
+CMSAttribute._oid_specs['spc_nested_signature'] = SetOfContentInfo
 
 EncapsulatedContentInfo._oid_specs['tst_info'] = TSTInfo

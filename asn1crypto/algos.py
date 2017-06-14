@@ -219,6 +219,7 @@ class RSASSAPSSParams(Sequence):
         ),
     ]
 
+
 class SignedDigestAlgorithmId(ObjectIdentifier):
     _map = {
         '1.3.14.3.2.3': 'md5_rsa',
@@ -246,7 +247,7 @@ class SignedDigestAlgorithmId(ObjectIdentifier):
         '1.2.840.113549.1.1.1': 'rsassa_pkcs1v15',
         '1.2.840.10040.4.1': 'dsa',
         '1.2.840.10045.4': 'ecdsa',
-        '1.2.840.10045.2.1': 'ecdsa', # also possible?
+        '1.2.840.10045.2.1': 'ecdsa',  # also possible?
     }
 
     _reverse_map = {
