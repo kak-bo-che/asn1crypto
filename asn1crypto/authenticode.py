@@ -41,6 +41,7 @@ from .tsp import (
 class SpcPeImageDataId(ObjectIdentifier):
     _map = {
         '1.3.6.1.4.1.311.2.1.15': 'spc_pe_image_data',
+        '1.3.6.1.4.1.311.2.1.30': 'spc_sipinfo_data',
     }
 
 
@@ -81,14 +82,29 @@ class SpcPeImageData(Sequence):
         ('file', SpcLink, {'tag_type': 'explicit', 'tag': 0}),
     ]
 
+class SpcSipInfo(Sequence):
+    _fields = [
+        # under specified in Authenticode Documentation
+        ('a', Integer),
+        ('unk_string', OctetString),
+        ('b', Integer),
+        ('c', Integer),
+        ('d', Integer),
+        ('e', Integer),
+        ('f', Integer)
+    ]
 
 class SpcAttributeTypeAndOptionalValue(Sequence):
     _fields = [
         ('type', SpcPeImageDataId),  # SPC_PE_IMAGE_DATAOBJ OID (1.3.6.1.4.1.311.2.1.15)
         # incorrectly specified in Authenticode Documentation
-        ('value', SpcPeImageData, {'optional': True})
-
+        ('value', Any, {'optional': True})
     ]
+    _oid_pair = ('type', 'value')
+    _oid_specs = {
+        'spc_pe_image_data': SpcPeImageData,
+        'spc_sipinfo_data': SpcSipInfo,
+    }
 
 
 class SpcIndirectDataContent(Sequence):
@@ -227,10 +243,12 @@ CMSAttributeType._map['1.3.6.1.4.1.311.10.3.28'] = 'platform_manifest_binary_id'
 CMSAttributeType._map['1.3.6.1.4.1.3845.3.9876.1.1.1'] = 'gotomeeting_data'
 
 ContentType._map['1.3.6.1.4.1.311.2.1.4'] = 'spc_indirect_data_content'
+
 # ContentType._map['1.3.7.19.4.8.15.8.2.4'] = '1.3.7.19.4.8.15.8.2.4'
 ContentType._map['1.3.6.1.4.1.311.10.1'] = 'certificate_trust_list'  # szOID_CTL
 
 ContentInfo._oid_specs['spc_indirect_data_content'] = SpcIndirectDataContent
+
 # ContentInfo._oid_specs['1.3.7.19.4.8.15.8.2.4'] = SpcIndirectDataContent
 ContentInfo._oid_specs['certificate_trust_list'] = CertificateTrustList
 
