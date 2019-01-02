@@ -85,13 +85,13 @@ class SpcPeImageData(Sequence):
 class SpcSipInfo(Sequence):
     _fields = [
         # under specified in Authenticode Documentation
-        ('a', Integer),
-        ('unk_string', OctetString),
-        ('b', Integer),
-        ('c', Integer),
-        ('d', Integer),
-        ('e', Integer),
-        ('f', Integer)
+        ('sip_version', Integer),
+        ('sip_guid', OctetString),
+        ('reserved1', Integer),
+        ('reserved2', Integer),
+        ('reserved3', Integer),
+        ('reserved4', Integer),
+        ('reserved5', Integer)
     ]
 
 class SpcAttributeTypeAndOptionalValue(Sequence):
