@@ -1247,7 +1247,6 @@ class Choice(Asn1Value):
 
         asn1 = self._format_class_tag(class_, tag)
         asn1s = [self._format_class_tag(pair[0], pair[1]) for pair in self._id_map]
-
         raise ValueError(unwrap(
             '''
             Value %s did not match the class and tag of any of the alternatives
@@ -2961,12 +2960,14 @@ class ObjectIdentifier(Primitive, ValueMap):
         return self._native
 
 
-class ObjectDescriptor(Primitive):
+class ObjectDescriptor(AbstractString):
     """
     Represents an object descriptor from ASN.1 - no Python implementation
     """
 
     tag = 7
+    # Might be completely wrong here... this is what MS uses
+    _encoding = 'utf-16-le'
 
 
 class InstanceOf(Primitive):
@@ -4767,7 +4768,13 @@ class GeneralizedTime(AbstractTime):
             date_format = '%Y%m%d%H%M'
         elif strlen == 14:
             date_format = '%Y%m%d%H%M%S'
-        elif strlen == 18:
+        elif strlen > 15 and strlen < 22:
+            # see note in python docs:
+            # When used with the strptime() method, the %f directive accepts
+            # from one to six digits and zero pads on the right. %f is an
+            # extension to the set of format characters in the C standard
+            # (but implemented separately in datetime objects, and therefore
+            # always available).
             date_format = '%Y%m%d%H%M%S.%f'
 
         if date_format:
