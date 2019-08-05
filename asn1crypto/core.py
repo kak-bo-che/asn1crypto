@@ -1286,7 +1286,6 @@ class Choice(Asn1Value):
 
         asn1 = self._format_class_tag(class_, tag)
         asn1s = [self._format_class_tag(pair[0], pair[1]) for pair in self._id_map]
-
         raise ValueError(unwrap(
             '''
             Value %s did not match the class and tag of any of the alternatives
@@ -3175,12 +3174,14 @@ class ObjectIdentifier(Primitive, ValueMap):
         return self._native
 
 
-class ObjectDescriptor(Primitive):
+class ObjectDescriptor(AbstractString):
     """
     Represents an object descriptor from ASN.1 - no Python implementation
     """
 
     tag = 7
+    # Might be completely wrong here... this is what MS uses
+    _encoding = 'utf-16-le'
 
 
 class InstanceOf(Primitive):

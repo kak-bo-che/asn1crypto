@@ -1769,7 +1769,12 @@ class KeyPurposeId(ObjectIdentifier):
         # https://www.adobe.com/devnet-docs/acrobatetk/tools/DigSig/changes.html
         '1.2.840.113583.1.1.5': 'adobe_authentic_documents_trust',
         # https://www.idmanagement.gov/wp-content/uploads/sites/1171/uploads/fpki-pivi-cert-profiles.pdf
-        '2.16.840.1.101.3.8.7': 'fpki_pivi_content_signing'
+        '2.16.840.1.101.3.8.7': 'fpki_pivi_content_signing',
+
+        # gated crypto https://en.wikipedia.org/wiki/Server-Gated_Cryptography
+        '2.16.840.1.113730.4.1': 'netscape_server_gated_crypto',
+        '2.16.840.1.113733.1.8.1': 'verisign_server_gated_crypto',
+
     }
 
 
@@ -2712,6 +2717,28 @@ class Certificate(Sequence):
                     continue
                 url = location.native
                 if url.lower().startswith(('http://', 'https://', 'ldap://', 'ldaps://')):
+                    output.append(url)
+        return output
+
+    @property
+    def ca_issuer_urls(self):
+        """
+        :return:
+            A list of zero or more unicode strings of the ca issuer urls for
+            this cert
+        """
+
+        if not self.authority_information_access_value:
+            return []
+
+        output = []
+        for entry in self.authority_information_access_value:
+            if entry['access_method'].native == 'ca_issuers':
+                location = entry['access_location']
+                if location.name != 'uniform_resource_identifier':
+                    continue
+                url = location.native
+                if url.lower()[0:7] == 'http://':
                     output.append(url)
         return output
 

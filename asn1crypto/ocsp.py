@@ -28,6 +28,7 @@ from .core import (
     ParsableOctetString,
     Sequence,
     SequenceOf,
+    Void
 )
 from .crl import AuthorityInfoAccessSyntax, CRLReason
 from .keys import PublicKeyAlgorithm
@@ -627,14 +628,16 @@ class OCSPResponse(Sequence):
         """
 
         self._critical_extensions = set()
-
-        for extension in self['response_bytes']['response'].parsed['tbs_response_data']['response_extensions']:
-            name = extension['extn_id'].native
-            attribute_name = '_%s_value' % name
-            if hasattr(self, attribute_name):
-                setattr(self, attribute_name, extension['extn_value'].parsed)
-            if extension['critical'].native:
-                self._critical_extensions.add(name)
+        response = self['response_bytes']['response'].parsed
+        # extensions are optional
+        if not isinstance(response['tbs_response_data']['response_extensions'], Void):
+            for extension in response['tbs_response_data']['response_extensions']:
+                name = extension['extn_id'].native
+                attribute_name = '_%s_value' % name
+                if hasattr(self, attribute_name):
+                    setattr(self, attribute_name, extension['extn_value'].parsed)
+                if extension['critical'].native:
+                    self._critical_extensions.add(name)
 
         self._processed_extensions = True
 
